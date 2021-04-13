@@ -1,22 +1,24 @@
 <script>
-	import Nav from '../components/Nav.svelte';
+	import Nav from "../components/Nav.svelte"
 
-	export let segment;
+	export let segment
 </script>
 
+<div class="container">
+	<!-- {#if segment != "article"}
+		<Nav segment={segment} />
+	{/if} -->
+	<Nav segment={segment} />
+
+	<main
+		style="background-color: white; box-sizing: border-box; margin-left: auto; margin-right: auto; max-width: 732px;"
+	>
+		<slot />
+	</main>
+</div>
+
 <style>
-	main {
-		position: relative;
-		max-width: 56em;
-		background-color: white;
-		padding: 2em;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
+	/* main {
+		height: 100%;
+	} */
 </style>
-
-<Nav {segment}/>
-
-<main>
-	<slot></slot>
-</main>

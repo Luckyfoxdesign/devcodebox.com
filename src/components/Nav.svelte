@@ -1,60 +1,131 @@
-<script>
-	export let segment;
+<script context="module">
+	import { goto } from "@sapper/app"
 </script>
 
+<script>
+	export let segment
+	import { stores } from "@sapper/app"
+	import { icLogout } from "./Icons"
+	const { page, session } = stores()
+
+	const logout = async () => {
+		await fetch("/api/auth/logout", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json",
+			},
+		}).then((responseResult) => {
+			if (responseResult.status === 200) {
+				$session.data = undefined
+				return goto(".", { replaceState: true })
+			} else {
+				throw new Error("Something went wrong")
+			}
+		})
+	}
+</script>
+
+<header>
+	<div class="head-content" style="padding-top: 16px;">
+		<div class="content">
+			<a rel="prefetch" href=".">
+				<img class="head-logo" src="site/logo.webp" alt="" />
+			</a>
+			<div class="header-data">
+				<div class="menu">
+					<a rel="prefetch" aria-current={segment === "blog" ? "page" : undefined} href="blog">Блог</a>
+				</div>
+				<div class="profile">
+					{#if $session.data != undefined}
+						<div class="profile-links">
+							<a rel="prefetch" aria-current={segment === "dashboard" ? "page" : undefined} href="dashboard">Дашборд</a>
+							<a rel="prefetch" aria-current={segment === "profile" ? "page" : undefined} href="profile">Профиль</a>
+						</div>
+						<div class="avatar-overlay">
+							<img class="avatar" src="/ti.webp" alt="" />
+						</div>
+						<button class="add-button" on:click={logout}>{@html icLogout()}</button>
+					{:else}
+						<a rel="prefetch" href="login">Вход</a>
+						<a rel="prefetch" href="registration">Регистрация</a>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
 <style>
-	nav {
-		border-bottom: 1px solid rgba(255,62,0,0.1);
-		font-weight: 300;
-		padding: 0 1em;
+	.head-content {
+		display: flex;
+		justify-content: center;
+		padding-bottom: 16px;
+		border-bottom: 2px solid #000;
 	}
-
-	ul {
-		margin: 0;
-		padding: 0;
+	.content {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		column-gap: 24px;
+		width: 732px;
 	}
-
-	/* clearfix */
-	ul::after {
-		content: '';
+	.head-logo {
 		display: block;
-		clear: both;
+		height: 32px;
+		width: 32px;
+		background-color: #ccc;
 	}
-
-	li {
-		display: block;
-		float: left;
+	.add-button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 32px;
+		width: 32px;
+		border-radius: 32px;
+		border: none;
+		cursor: pointer;
+		background-color: var(--WhiteFF);
 	}
-
-	[aria-current] {
+	.add-button:hover {
+		background-color: var(--GrayF5);
+	}
+	.profile {
+		display: grid;
+		grid-template-columns: auto 32px 32px;
+		column-gap: 16px;
+		align-items: inherit;
+	}
+	.profile-links {
+		display: grid;
+		grid-template-columns: repeat(2, auto);
+		column-gap: 16px;
+		text-align: right;
+	}
+	.header-data {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		column-gap: 32px;
+		align-items: center;
+		grid-template-rows: 32px;
+	}
+	.avatar-overlay {
+		width: 32px;
+		height: 32px;
+		overflow: hidden;
 		position: relative;
-		display: inline-block;
+		border-radius: 16px;
+		display: block;
 	}
-
-	[aria-current]::after {
+	.avatar {
+		width: 100%;
 		position: absolute;
-		content: '';
-		width: calc(100% - 1em);
-		height: 2px;
-		background-color: rgb(255,62,0);
-		display: block;
-		bottom: -1px;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
 	}
-
-	a {
-		text-decoration: none;
-		padding: 1em 0.5em;
-		display: block;
+	[aria-current] {
+		color: var(--Blue500);
 	}
 </style>
-
-<nav>
-	<ul>
-		<li><a aria-current="{segment === undefined ? 'page' : undefined}" href=".">home</a></li>
-		<li><a aria-current="{segment === 'about' ? 'page' : undefined}" href="about">about</a></li>
-
-		<!-- for the blog link, we're using rel=prefetch so that Sapper prefetches
-		     the blog data when we hover over the link or tap it on a touchscreen -->
-		<li><a rel=prefetch aria-current="{segment === 'blog' ? 'page' : undefined}" href="blog">blog</a></li>
-	</ul>
-</nav>

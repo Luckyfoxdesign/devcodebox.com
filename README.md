@@ -1,152 +1,89 @@
-# sapper-template
+# Pyper blog
 
-The default template for setting up a [Sapper](https://github.com/sveltejs/sapper) project. Can use either Rollup or webpack as bundler.
+Pyper – это приложениие для ведения блога.
 
+Приложение состоит из трех частей. Sapper для фронтенда, nodejs/express для промежуточного прокси сервера и nodejs/express для бекенда, который обрабатывает запросы к MongoDB.
 
-## Getting started
+## Содержание
+- [Pyper blog](#pyper-blog)
+  - [Содержание](#содержание)
+- [Запуск](#запуск)
+  - [Настройка базы данных](#настройка-базы-данных)
+  - [Настройка приложения](#настройка-приложения)
+- [Цель](#цель)
+- [Сложности](#сложности)
+- [TODO](#todo)
+- [Contribution](#contribution)
 
+# Запуск
 
-### Using `degit`
+Как запустить на VPS - не знаю. Не запускал. Поэтому весь остальной текст будет про локалку.
 
-To create a new Sapper project based on Rollup locally, run
+Тестировал с autocannon, выдеживает до 800 одновременных соединений для главной страницы. С авторизацией и регистрацией будет гораздо ниже. Ну и тестировал я скорее всего неправильно.
 
-```bash
-npx degit "sveltejs/sapper-template#rollup" my-app
-```
+В общем как разберусь с настройкой CI/CD, чтобы вручную не подтягивать изменения и не ребилдить, запущу и на VPS. Но юбудет это не скоро.
 
-For a webpack-based project, instead run
 
-```bash
-npx degit "sveltejs/sapper-template#webpack" my-app
-```
+## Настройка базы данных
 
-[`degit`](https://github.com/Rich-Harris/degit) is a scaffolding tool that lets you create a directory from a branch in a repository.
+Чтобы все заработало, у вас должна быть установленная и рабочая MongoDB. Хоть на сервере хоть на локалке не суть важно. Базы данных нужно подготовить заранее, т.к они автоматически при запросе не создадутся в данном случае. Коллекции можно не создавать, они уже создадутся автоматически при подключении к бд.
 
-Replace `my-app` with the path where you wish to create the project.
+> Если вы ну вот ни разу не работали с MongoDB, уж извините, детально рассказывать про настройку не буду, оставляю вам самим пройти этот непростой но интересный квест, какой прошел и я.
 
+Структура без дефолтных баз:
 
-### Using GitHub templates
+- `articles_db` - база для опубликованных статей и черновиков
+  - `draftArticles_collection`
+  - `publicArticles_collection`
+- `sessions_db` - сессии у меня висят тоже на MongoDB
+  - `sessions`
+- `users_db` - база для регистрации пользователей
+  - `user_collection`
 
-Alternatively, you can create the new project as a GitHub repository using GitHub's template feature.
+Сейчас доступ ко всем базам происходит через единственного пользователя лежащего в `admin` с правами на чтение и запись на все базы. Как делать правильно - еще не изучал, но со временем найду ответ.
 
-Go to either [sapper-template-rollup](https://github.com/sveltejs/sapper-template-rollup) or [sapper-template-webpack](https://github.com/sveltejs/sapper-template-webpack) and click on "Use this template" to create a new project repository initialized by the template.
+В `config/config.js` нужно указать в переменных логин/пароль, либо сделать через переменные окружения - на ваше усмотрение.
 
 
-### Running the project
+## Настройка приложения
 
-Once you have created the project, install dependencies and run the project in development mode:
+Настраивать приложение не нужно, скрипты запуска прокси, фронта и бекэнда - `npm run dev`.
 
-```bash
-cd my-app
-npm install # or yarn
-npm run dev
-```
+# Цель
 
-This will start the development server on [localhost:3000](http://localhost:3000). Open it and click around.
+Делал для:
+- изучения MongoDB
+- практики в создании клиент-серверного приложения
+- себя, давно хотел свой блог
 
-You now have a fully functional Sapper project! To get started developing, consult [sapper.svelte.dev](https://sapper.svelte.dev).
+# Сложности
 
-### Using TypeScript
+Изначально цель была сделать принцип редактирования как у телеграфа, но спустя время понял какие у меня ограничения и что мой текущий уровень не позволяет их преоделеть.
 
-By default, the template uses plain JavaScript. If you wish to use TypeScript instead, you need some changes to the project:
+1. Самое сложное из ограничений - определение позиции каретки при различных манипуляциях с текстом: *выделении, удалении, переход на новую строку* и.т.д
 
- * Add `typescript` as well as typings as dependences in `package.json`
- * Configure the bundler to use [`svelte-preprocess`](https://github.com/sveltejs/svelte-preprocess) and transpile the TypeScript code.
- * Add a `tsconfig.json` file
- * Update the project code to TypeScript
+Готовые пакеты принципиально не использовал. Какой я программист если не сделаю свое и "*круче*". Все найденные библиотеки, используют `execCommand` который помечен как `deprecated` т.к оно работает в каждом браузере по своему, исходя из документации на MDN. В итоге все работает "*по кнопке*".
 
-The template comes with a script that will perform these changes for you by running
+2. Вторая сложность заключается в том, что я непонимаю как работает Express внутри и как работают `async` middleware для роутов и следовательно не знаю как все сделать лучше. Event loop, стек, нода все остальное - слишком много абстракций, не вывожу, нужно время и упорядоченность знаний.
+3. Без понятия как развертывать приложение так, чтобы вручную не подтягивать все изменения с Github и автоматически ребилдить. В итоге все сейчас только на локалке.
 
-```bash
-node scripts/setupTypeScript.js
-```
+# TODO
 
-`@sapper` dependencies are resolved through `src/node_modules/@sapper`, which is created during the build. You therefore need to run or build the project once to avoid warnings about missing dependencies.
+Если мне будет не лень, то думаю сделать следующие вещи:
 
-The script does not support webpack at the moment.
+- [ ] Хочется оптимизировать работу с данными и при возможности переиспользовать store, вместо того, чтобы повторно запрашивать уже загруженные данные;
+- [ ] Много мест, где функции дублируются и можно вытащить их в одно место;
+- [ ] Много мест, где можно выделить html в отдельные компоненты, например кнопки. Добавить может быть возможность выбора типа, primary, secondary, на основе одного компонента;
+- [ ] Получше организовать роуты на бэкенде, сейчас почти на каждый роут отдельная папка;
+- [ ] Разобраться с прокси-сервером чтобы понять, как с его помощью обезопасить бэкенд и можно ли;
+- [ ] Добавить форматирование текста
+- [ ] Добавить перемещение элементов вверх-вниз
+- [ ] Сделать добавление элементов не через кнопку, а через форматирование
+- [ ] Может быть перейду на SvelteKit
+- [ ] Подумать над организацией запросов к бекэнду, некоторые запросы обращаются к одним и тем же роутам, но за разными данными, ок не ок...
 
-## Directory structure
+# Contribution
 
-Sapper expects to find two directories in the root of your project —  `src` and `static`.
+Буду рад вашим коммитам, особенно если вы сопроводите их комментариями почему именно так, а не иначе.
 
-
-### src
-
-The [src](src) directory contains the entry points for your app — `client.js`, `server.js` and (optionally) a `service-worker.js` — along with a `template.html` file and a `routes` directory.
-
-
-#### src/routes
-
-This is the heart of your Sapper app. There are two kinds of routes — *pages*, and *server routes*.
-
-**Pages** are Svelte components written in `.svelte` files. When a user first visits the application, they will be served a server-rendered version of the route in question, plus some JavaScript that 'hydrates' the page and initialises a client-side router. From that point forward, navigating to other pages is handled entirely on the client for a fast, app-like feel. (Sapper will preload and cache the code for these subsequent pages, so that navigation is instantaneous.)
-
-**Server routes** are modules written in `.js` files, that export functions corresponding to HTTP methods. Each function receives Express `request` and `response` objects as arguments, plus a `next` function. This is useful for creating a JSON API, for example.
-
-There are three simple rules for naming the files that define your routes:
-
-* A file called `src/routes/about.svelte` corresponds to the `/about` route. A file called `src/routes/blog/[slug].svelte` corresponds to the `/blog/:slug` route, in which case `params.slug` is available to the route
-* The file `src/routes/index.svelte` (or `src/routes/index.js`) corresponds to the root of your app. `src/routes/about/index.svelte` is treated the same as `src/routes/about.svelte`.
-* Files and directories with a leading underscore do *not* create routes. This allows you to colocate helper modules and components with the routes that depend on them — for example you could have a file called `src/routes/_helpers/datetime.js` and it would *not* create a `/_helpers/datetime` route.
-
-
-#### src/node_modules/images
-
-Images added to `src/node_modules/images` can be imported into your code using `import 'images/<filename>'`. They will be given a dynamically generated filename containing a hash, allowing for efficient caching and serving the images on a CDN.
-
-See [`index.svelte`](src/routes/index.svelte) for an example.
-
-
-#### src/node_modules/@sapper
-
-This directory is managed by Sapper and generated when building. It contains all the code you import from `@sapper` modules.
-
-
-### static
-
-The [static](static) directory contains static assets that should be served publicly. Files in this directory will be available directly under the root URL, e.g. an `image.jpg` will be available as `/image.jpg`.
-
-The default [service-worker.js](src/service-worker.js) will preload and cache these files, by retrieving a list of `files` from the generated manifest:
-
-```js
-import { files } from '@sapper/service-worker';
-```
-
-If you have static files you do not want to cache, you should exclude them from this list after importing it (and before passing it to `cache.addAll`).
-
-Static files are served using [sirv](https://github.com/lukeed/sirv).
-
-
-## Bundler configuration
-
-Sapper uses Rollup or webpack to provide code-splitting and dynamic imports, as well as compiling your Svelte components. With webpack, it also provides hot module reloading. As long as you don't do anything daft, you can edit the configuration files to add whatever plugins you'd like.
-
-
-## Production mode and deployment
-
-To start a production version of your app, run `npm run build && npm start`. This will disable live reloading, and activate the appropriate bundler plugins.
-
-You can deploy your application to any environment that supports Node 10 or above. As an example, to deploy to [Vercel Now](https://vercel.com) when using `sapper export`, run these commands:
-
-```bash
-npm install -g vercel
-vercel
-```
-
-If your app can't be exported to a static site, you can use the [now-sapper](https://github.com/thgh/now-sapper) builder. You can find instructions on how to do so in its [README](https://github.com/thgh/now-sapper#basic-usage).
-
-
-## Using external components
-
-When using Svelte components installed from npm, such as [@sveltejs/svelte-virtual-list](https://github.com/sveltejs/svelte-virtual-list), Svelte needs the original component source (rather than any precompiled JavaScript that ships with the component). This allows the component to be rendered server-side, and also keeps your client-side app smaller.
-
-Because of that, it's essential that the bundler doesn't treat the package as an *external dependency*. You can either modify the `external` option under `server` in [rollup.config.js](rollup.config.js) or the `externals` option in [webpack.config.js](webpack.config.js), or simply install the package to `devDependencies` rather than `dependencies`, which will cause it to get bundled (and therefore compiled) with your app:
-
-```bash
-npm install -D @sveltejs/svelte-virtual-list
-```
-
-
-## Bugs and feedback
-
-Sapper is in early development, and may have the odd rough edge here and there. Please be vocal over on the [Sapper issue tracker](https://github.com/sveltejs/sapper/issues).
+И можно поддержать рублем: https://www.tinkoff.ru/sl/4wX5S96lj7t
