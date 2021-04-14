@@ -1,13 +1,7 @@
 {
-<<<<<<< HEAD
   "name": "pyper",
   "description": "Pyper blog. Blogging app.",
   "version": "1.0.0",
-=======
-  "name": "devcodebox",
-  "description": "TODO",
-  "version": "0.0.1",
->>>>>>> 62a7a0d3c56a1648fb30a98325b3223809e58a97
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
