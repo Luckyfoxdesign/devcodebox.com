@@ -106,7 +106,7 @@ Pyper – это приложениие для ведения блога.
 
 # Демо видео
 
-[![Sapper/Express/MongoDB demo video](img/DemoVideo.png)](https://youtu.be/EbwmbMoPZsA)
+[![Sapper/Express/MongoDB demo video](img/DemoVideo.png)](https://youtu.be/Vl1mEO2HqNg)
 
 # Contribution
 
