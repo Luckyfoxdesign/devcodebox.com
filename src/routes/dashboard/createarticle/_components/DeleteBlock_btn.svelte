@@ -6,16 +6,14 @@
 
 <button
 	class="block-delete button"
+	on:mouseenter={(e) => {
+		e.currentTarget.parentElement.style.backgroundColor = "#ffd5d5"
+	}}
+	on:mouseleave={(e) => {
+		e.currentTarget.parentElement.style.backgroundColor = "#ffffff"
+	}}
 	on:click={(e) => {
-		let dataId
-		switch (e.target.nodeName) {
-			case "BUTTON":
-				dataId = e.target.parentElement.getAttribute("data-id")
-				break
-			case "svg" || "path":
-				dataId = e.target.parentElement.parentElement.getAttribute("data-id")
-				break
-		}
+		const dataId = e.currentTarget.parentElement.getAttribute("data-id")
 		const articleBlockIndex = fakeArr.findIndex((articleBlock) => articleBlock.dataId === dataId)
 		fakeArr.splice(articleBlockIndex, 1)
 		$articleBlocksArray = fakeArr

@@ -1,7 +1,7 @@
 {
   "name": "pyper",
   "description": "Pyper blog. Blogging app.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",

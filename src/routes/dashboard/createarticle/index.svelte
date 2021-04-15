@@ -28,7 +28,8 @@
 	let files // переменная для выбранных файлов
 	let isDOMLoaded = false
 	let isErrorMessage = false
-	let errorMessageText = ""
+	let errorMessageText = "",
+		isElementHovered = false
 	// let isPreviewImageLoaded = false
 
 	function addNewParagraph() {
@@ -130,6 +131,8 @@
 	function showDeleteElementButton(e) {
 		// функция для показа кнопки удаления элемента (крестик)
 		e.target.lastElementChild.style.opacity = "1"
+		// e.target.style.boxShadow = "inset 0 0 0 1px #f5f5f5"
+		// console.log(e.target)
 	}
 
 	function hideDeleteElementButton(e) {
@@ -395,6 +398,10 @@
 		color: var(--Gray75);
 	}
 
+	.hovered-element {
+		background-color: #ccc;
+	}
+
 	/* Контейнер и картинка */
 	.image-container {
 		position: relative;
@@ -430,6 +437,12 @@
 	.article-block {
 		position: relative;
 	}
+	/* .article-block:hover {
+		background-color: var(--GrayF5);
+	}
+	.article-paragraph:focus {
+		background-color: var(--GrayF5);
+	} */
 	/* Стили всех параграфов */
 	.article-paragraph {
 		outline: 0;
