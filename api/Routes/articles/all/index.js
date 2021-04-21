@@ -2,7 +2,6 @@
 
 const express = require("express")
 const router = express.Router()
-const mongooose = require("mongoose")
 const { json } = require("body-parser")
 const config = require("../../../../config/config")
 

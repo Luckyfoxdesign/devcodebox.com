@@ -15,7 +15,7 @@ const multer = require("multer")
 const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
-const { PORT, NODE_ENV } = process.env
+const { PORT, NODE_ENV, DBUSRNAME, DBUSRPWD } = process.env
 const dev = NODE_ENV === "development"
 
 app.post("/api/uploadImage", upload.single("article-image"), async (req, res) => {

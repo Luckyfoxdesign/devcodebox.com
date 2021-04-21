@@ -3,7 +3,6 @@
 const express = require("express")
 const router = express.Router()
 const { json } = require("body-parser")
-const mongoose = require("mongoose")
 const articleModel = require("../models/Article")
 const config = require("../../../../config/config")
 

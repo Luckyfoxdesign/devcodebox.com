@@ -1,7 +1,7 @@
 {
   "name": "pyper",
   "description": "Pyper blog. Blogging app.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
@@ -9,18 +9,15 @@
     "start": "node __sapper__/build"
   },
   "dependencies": {
-    "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.1",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
-    "http-proxy": "^1.18.1",
     "mongoose": "^5.11.15",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",
-    "polka": "^0.5.2",
     "sharp": "^0.27.2",
     "sirv": "^1.0.0",
     "uuid": "^8.3.2"

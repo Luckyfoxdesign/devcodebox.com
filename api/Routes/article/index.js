@@ -5,7 +5,6 @@ const router = express.Router()
 const { json } = require("body-parser")
 const mongoose = require("mongoose")
 const config = require("../../../config/config")
-const utf8 = require("utf8")
 
 function returnDBCollectionName(type) {
 	if (type === "draft") return "draftArticles_collection"
